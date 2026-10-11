@@ -138,7 +138,7 @@ details.rm{margin-top:8px}details.rm summary{cursor:pointer;color:var(--muted)}d
 .ddr img,.ddr .ph{width:38px;height:57px;object-fit:cover;border-radius:5px;background:#222;flex:none}
 .ddr .ph{display:flex;align-items:center;justify-content:center;font-size:1.3rem}
 .ddt{flex:1;min-width:0;line-height:1.25}.ddt b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ddt .small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ddt .small{display:block}.ddt .small.by{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ddt .by{color:#9cc0ff}
 .ddsim{flex:none;padding:8px 12px;font-size:.78rem;border-radius:999px;border-color:#6a4a8c;color:#e6d3ff;background:#2b2236;white-space:nowrap}
 .ddtag{font-size:.68rem;border-radius:5px;padding:0 5px;border:1px solid var(--live);color:#c4c8d6;white-space:nowrap}
@@ -909,7 +909,7 @@ function ddRow(m,text){
   const meta=`${m.show?m.yearsTxt||m.year||"—":m.year||"—"} · ${m.show?"TV show":"Movie"}${m.imdb!=null?" · ★ "+m.imdb.toFixed(1):""}`;
   const th=m.known?`<span class="ph">🎞️</span>`:`<img loading="lazy" alt="" src="${esc(posterSrc(m))}" data-t="${esc(m.title)}">`;
   const tag=m.known?`<span class="ddtag" title="Not in this library: no US subscription / free / library-card offer found">not in library</span>`:m.now?`<span class="ddtag now">streaming</span>`:`<span class="ddtag" title="In the library, but no subscription / free offer right now">not streaming</span>`;
-  return `<div class="ddr" role="option" data-act="sv-pick" ${m.known?`data-kid="${m.k}"`:`data-id="${esc(m.id)}"`}>${th}<div class="ddt"><b>${esc(m.title)}</b><span class="small">${esc(meta)} ${m.show?'<span class="ddtag tv">TV</span> ':""}${tag}</span>${tl?`<span class="small by">${esc(by.k)}: ${esc(by.n)}</span>`:""}</div><button class="ddsim" data-act="sv-similar" ${m.known?`data-kid="${m.k}"`:`data-id="${esc(m.id)}"`} aria-label="Find titles similar to ${esc(m.title)}">🔁 Find similar</button></div>`;}
+  return `<div class="ddr" role="option" data-act="sv-pick" ${m.known?`data-kid="${m.k}"`:`data-id="${esc(m.id)}"`}>${th}<div class="ddt"><b>${esc(m.title)}</b><span class="small">${esc(meta)} ${tag}</span>${tl?`<span class="small by">${esc(by.k)}: ${esc(by.n)}</span>`:""}</div><button class="ddsim" data-act="sv-similar" ${m.known?`data-kid="${m.k}"`:`data-id="${esc(m.id)}"`} aria-label="Find titles similar to ${esc(m.title)}">🔁 Find similar</button></div>`;}
 function ddHtml(){
   const v=$("#q").value,t=v.trim();
   if(!t){
