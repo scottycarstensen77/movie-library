@@ -57,7 +57,7 @@ input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);cursor:po
 .pwrap .imdb{position:absolute;left:6px;top:6px;background:#f5c518;color:#111;font-weight:800;font-size:.78rem;border-radius:5px;padding:1px 6px}
 .pwrap .st{position:absolute;right:6px;top:6px;display:flex;flex-direction:column;gap:3px;align-items:flex-end}
 .badge{display:inline-block;border-radius:5px;padding:0 6px;font-size:.72rem;font-weight:700;color:#fff;background:#3d4460}
-.badge.Loved{background:var(--loved)}.badge.Liked{background:var(--liked);color:#06180f}.badge.Okay{background:var(--okay);color:#251a00}.badge.Disliked{background:var(--disliked)}.badge.wl{background:var(--sub)}.badge.ni{background:#555}.badge.seen{background:#3d4460}
+.badge.Loved{background:var(--loved);color:#1a0505}.badge.Liked{background:var(--liked);color:#06180f}.badge.Okay{background:var(--okay);color:#251a00}.badge.Disliked{background:var(--disliked);color:#07101c}.badge.wl{background:var(--sub);color:#07101c}.badge.ni{background:#555}.badge.seen{background:#3d4460}
 .pwrap .fit{position:absolute;left:6px;bottom:6px;background:rgba(0,0,0,.78);border:1px solid var(--accent);color:var(--gold);border-radius:6px;font-size:.74rem;font-weight:700;padding:0 6px}
 .pwrap .pick{position:absolute;right:6px;bottom:6px;background:rgba(0,0,0,.78);border:1px solid var(--gold);color:var(--gold);border-radius:6px;font-size:.7rem;padding:0 6px}
 .cb{padding:8px 9px 9px;display:flex;flex-direction:column;gap:4px;flex:1}
@@ -105,6 +105,8 @@ input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);cursor:po
 .wt a.it:hover{filter:brightness(1.4)}
 .play{display:inline-flex;align-items:center;gap:4px;border-radius:8px;padding:4px 10px;font-weight:700;font-size:.82rem;text-decoration:none;background:#2fbf71;color:#04140a;border:1px solid #2fbf71;margin:2px 4px 2px 0}
 .play.free{background:#4fc3f7;border-color:#4fc3f7}.play.lib{background:#c9a0ff;border-color:#c9a0ff}.play.fb{background:transparent;color:inherit;border-style:dashed;font-weight:600}
+/* contrast fix 2026-10-18: "play sub/free/lib" also matched ".cb .sub{color:muted}" -> grey text on green (1.0:1). a.play.* (0,2,1) outranks ".cb .sub" (0,2,0); text is near-black, >=7.5:1 on every Play colour (WCAG AA/AAA) */
+a.play.sub,a.play.free,a.play.lib{color:#0b1a10;font-weight:800;text-shadow:none}a.play.fb{color:var(--text);background:transparent}
 .play:hover{filter:brightness(1.12)}.cplay{margin-top:4px;display:flex;gap:4px;align-items:center;flex-wrap:wrap}.cplay .play{font-size:.74rem;padding:3px 8px;margin:0}
 .playrow{display:flex;flex-wrap:wrap}.splay{font-size:.72rem;text-decoration:none;border:1px solid #2fbf71;color:#2fbf71;border-radius:6px;padding:0 6px;margin-left:4px}
 .row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0}
@@ -113,7 +115,7 @@ input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);cursor:po
 .cmt{width:100%;min-height:50px;resize:vertical;font:inherit;font-size:.9rem;color:var(--text);background:#10131c;border:1px solid var(--line);border-radius:8px;padding:6px 10px}
 .small{font-size:.78rem;color:var(--muted)}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(80px);background:#222a40;border:1px solid var(--accent);color:#fff;padding:10px 18px;border-radius:12px;opacity:0;transition:.25s;z-index:99;pointer-events:none}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}.toast.err{border-color:var(--red)}
-.badge.new{background:linear-gradient(135deg,#ff3d6e,#ff7a3d);color:#fff;box-shadow:0 0 0 1px #fff4 inset;letter-spacing:.5px}.badge.leave{background:#7a5a12;color:#ffe9b0}
+.badge.new{background:linear-gradient(135deg,#ff3d6e,#ff7a3d);color:#1a0505;box-shadow:0 0 0 1px #fff4 inset;letter-spacing:.5px}.badge.leave{background:#7a5a12;color:#ffe9b0}
 .newline{font-size:.74rem;color:#ffd0b8;background:#3a1f16;border:1px solid #7a3b22;border-radius:6px;padding:1px 6px;cursor:help}.leaveline{font-size:.72rem;color:#ffe9b0;background:#2b2410;border:1px solid #6b5a22;border-radius:6px;padding:1px 6px}
 nav.tabs button[data-val=new]{color:#ffb08a;font-weight:700}nav.tabs button[data-val=new] .n{background:var(--accent);color:#1a0d05;font-weight:700}
 .nstrip{background:linear-gradient(180deg,#2a1a17,#1b1620);border:1px solid #7a3b22;border-radius:14px;padding:10px 12px;margin-bottom:12px}
