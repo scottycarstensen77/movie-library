@@ -109,6 +109,7 @@ input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);cursor:po
 a.play.sub,a.play.free,a.play.lib{color:#0b1a10;font-weight:800;text-shadow:none}a.play.fb{color:var(--text);background:transparent}
 .play:hover{filter:brightness(1.12)}.cplay{margin-top:4px;display:flex;gap:4px;align-items:center;flex-wrap:wrap}.cplay .play{font-size:.74rem;padding:3px 8px;margin:0}
 .playrow{display:flex;flex-wrap:wrap}.splay{font-size:.72rem;text-decoration:none;border:1px solid #2fbf71;color:#2fbf71;border-radius:6px;padding:0 6px;margin-left:4px}
+.rokubtn{display:inline-flex;align-items:center;gap:5px;border-radius:8px;padding:6px 12px;font-weight:800;font-size:.9rem;text-decoration:none;background:#f1e9ff;color:#2a0f4a;border:2px solid #b48cff;margin:6px 4px 2px 0;cursor:pointer}.rokubtn.sm{font-size:.74rem;padding:3px 8px;margin:0;border-width:1px}
 .row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0}
 .rbtn{border-radius:999px;font-weight:600}.rbtn.on[data-val=Loved]{background:var(--loved);border-color:var(--loved)}.rbtn.on[data-val=Liked]{background:var(--liked);border-color:var(--liked);color:#06180f}.rbtn.on[data-val=Okay]{background:var(--okay);border-color:var(--okay);color:#251a00}.rbtn.on[data-val=Disliked]{background:var(--disliked);border-color:var(--disliked)}
 .tb.on{background:var(--sub);border-color:var(--sub)}.tb.ni.on{background:#555}
@@ -634,11 +635,24 @@ function playLinks(m){const order={sub:0,free:1,lib:2},seen=new Map();
   m.offers.filter(o=>o.p.t!=="live"&&order[o.p.t]!=null).sort((a,b)=>order[a.p.t]-order[b.p.t]).forEach(o=>{const k=o.p.n;const cur=seen.get(k);
     const ok=o.url&&/^https:\/\//.test(o.url);if(!cur||(!cur.direct&&ok&&!isJwUrl(o.url)))seen.set(k,{p:o.p,url:ok?o.url:jwPage(m),direct:ok&&!isJwUrl(o.url),via:ok&&isJwUrl(o.url)});});
   return [...seen.values()];}
+/* Roku remote launcher (2026-10-19). Verified ids: iOS App Store id482066631 (bundle com.roku.ios.roku), Android package com.roku.remote.
+   iOS: Roku publishes no universal link for the app (therokuchannel.roku.com AASA excludes all paths), so we try the roku:// scheme
+   (third-party scheme list) and fall back to the App Store if the app didn't open. Android: intent:// with Play Store fallback. */
+const ROKU_IOS_STORE="https://apps.apple.com/us/app/roku-remote-official/id482066631",ROKU_PLAY="https://play.google.com/store/apps/details?id=com.roku.remote";
+function rokuHref(){const ua=navigator.userAgent||"";
+  if(/Android/i.test(ua))return "intent://#Intent;scheme=roku;package=com.roku.remote;S.browser_fallback_url="+encodeURIComponent(ROKU_PLAY)+";end";
+  if(/iPhone|iPad|iPod/i.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1))return "roku://";return ROKU_IOS_STORE;}
+function rokuBtn(small){return `<a class="rokubtn${small?" sm":""}" data-roku="1" href="${esc(rokuHref())}" title="Open the Roku mobile app to use it as your remote">📱 ${small?"Roku remote":"Open Roku remote"}</a>`;}
+document.addEventListener("click",e=>{const r=e.target.closest&&e.target.closest("a[data-roku]");
+  if(r){e.stopPropagation();const h=r.getAttribute("href");if(h==="roku://"){e.preventDefault();let left=false;const v=()=>{if(document.hidden)left=true;};document.addEventListener("visibilitychange",v);
+      location.href=h;setTimeout(()=>{document.removeEventListener("visibilitychange",v);if(!left&&!document.hidden){toast("Roku app didn't open, opening the App Store");location.href=ROKU_IOS_STORE;}},1600);}
+    else toast("Opening the Roku app. Tap Remote");return;}
+  const p=e.target.closest&&e.target.closest("a.play");if(p)toast("Opening the app. Then use Cast, or the Roku remote");},true);
 function playBtn(x,small){const lab=x.direct?`▶ Play on ${x.p.n}`:`▶ ${x.p.n} — find on JustWatch`;
   return `<a class="play ${x.p.t}${x.direct?"":" fb"}" href="${esc(x.url)}" target="_blank" rel="noopener noreferrer" title="${esc(x.direct?"Opens "+x.p.n+" (its app on phones). "+TYPE_LABEL[x.p.t]:"No direct "+x.p.n+" link from JustWatch; opens the JustWatch page for this title")}">${esc(small&&x.direct?"▶ "+x.p.n:lab)}</a>`;}
-function cardPlay(m){const l=playLinks(m);if(!l.length)return "";return `<div class="cplay">${playBtn(l[0],true)}${l.length>1?`<span class="small" data-act="open" style="cursor:pointer">+${l.length-1} more</span>`:""}</div>`;}
+function cardPlay(m){const l=playLinks(m);if(!l.length)return "";return `<div class="cplay">${playBtn(l[0],true)}${rokuBtn(true)}${l.length>1?`<span class="small" data-act="open" style="cursor:pointer">+${l.length-1} more</span>`:""}</div>`;}
 function playHtml(m){const l=playLinks(m);if(!l.length)return "";
-  return `<div class="sec"><h4>▶ Play</h4><div class="playrow">${l.map(x=>playBtn(x)).join("")}</div><div class="small" style="margin-top:4px">Opens in the app; use its Cast/AirPlay button to send to your TV.</div></div>`;}
+  return `<div class="sec"><h4>▶ Play</h4><div class="playrow">${l.map(x=>playBtn(x)).join("")}</div><div>${rokuBtn()}</div><div class="small" style="margin-top:4px">Opens in the app; use its Cast/AirPlay button to send to your TV.</div><div class="small">Or open the Roku remote app and pick the app on your TV.</div></div>`;}
 function seasonPlay(m,s){const series=new Map(playLinks(m).map(x=>[x.p.n,x]));
   return s.provs.filter(p=>p.t!=="live").map(p=>{const su=(m.surls||[]).find(x=>x.n===s.n&&x.p===p);const u=su?su.url:(series.get(p.n)||{}).url;if(!u)return "";const d=su||((series.get(p.n)||{}).direct);
     return `<a class="splay" href="${esc(u)}" target="_blank" rel="noopener noreferrer" title="${esc(su?"Season "+s.n+" on "+p.n:d?"Series link on "+p.n+" (JustWatch has no separate season link)":"JustWatch page")}">▶ ${esc(p.n)}${su?"":d?"":" (JustWatch)"}</a>`;}).join("");}
